@@ -1,0 +1,35 @@
+#board{
+    width: 640px;
+    float: left;
+}
+.white-cell, .black-cell{
+    width: 80px;
+    height: 80px;
+    float: left;
+    padding: 0px;
+    margin: 0px;
+}
+.white-cell {
+    background: url('../images/sv_kletka.gif');
+}
+.black-cell {
+    background: url('../images/tem_kletka.gif');
+}
+.active-cell {
+    background: green !important;
+}
+.step-white {
+    background: red !important;
+}
+.step-black {
+    background: blue !important;
+}
+.cell-img {
+    margin-left: 15px;
+    margin-top: 15px;
+}
+#button {
+    float: left;
+    margin-left: 100px;
+    padding-left: 100px
+}

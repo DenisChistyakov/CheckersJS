@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+  
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+	
+<title>Шашки им. Пана Дизеля</title> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/styles.css"/>
+	
+<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript">
+    
+     $(document).ready(function () {
+        
+        initCheckers ();
+        
+        $('.cell').unbind('click').bind('click', function () {
+            
+            if (whiteStep == false && blackStep == true) {
+                activeWhiteCellID = $('.active-cell').attr('id');
+            }
+            else if (whiteStep == true && blackStep == false) {
+                activeBlackCellID = $('.active-cell').attr('id');
+            }
+            
+            $('.cell').removeClass('active-cell');            
+                        
+            var hasFigure = $(this).find('img');
+            
+            // White checkers
+            if (hasFigure.hasClass('white-checker')) {
+                $(this).addClass('active-cell');
+                whitePrevious = $(this).attr('id');
+                
+                
+                var id = $(this).attr('id');
+                
+                var x = id.split('-')[3]; 
+                var y = id.split('-')[5];
+                
+                var stepX = parseInt(x) - 1;
+                var stepY1 = parseInt(y) - 1;
+                var stepY2 = parseInt(y) + 1;
+                
+                var stepFigure1ID = '#white-cell-x-' + stepX + '-y-' + stepY1;
+                var stepFigure2ID = '#white-cell-x-' + stepX + '-y-' + stepY2;
+                
+                if (whiteStep == false && blackStep == true) {
+                    $('.cell').removeClass('step-white');
+                    
+                    if (!$(stepFigure1ID).find('img').hasClass('cell-img')) {
+                        $(stepFigure1ID).addClass('step-white');
+                    }
+                    if (!$(stepFigure2ID).find('img').hasClass('cell-img')) {                        
+                        $(stepFigure2ID).addClass('step-white');
+                    }
+                    
+                    // Attack implementation is here START                    
+                    var attackX = parseInt(x) - 2;
+                    var attackY1 = parseInt(y) - 2;
+                    var attackY2 = parseInt(y) + 2;                                       
+                    
+                    var attackFigure1ID = '#white-cell-x-' + attackX + '-y-' + attackY1;
+                    var attackFigure2ID = '#white-cell-x-' + attackX + '-y-' + attackY2;
+                
+                    if ($(stepFigure1ID).find('img').hasClass('black-checker')) {
+                        if (!$(stepFigure1ID).find('img').hasClass('white-checker') && !$(attackFigure1ID).find('img').hasClass('cell-img')) {                            
+                            $(attackFigure1ID).addClass('step-white');
+                        }                                               
+                    }                    
+                    
+                    if ($(stepFigure2ID).find('img').hasClass('black-checker')) {
+                        if (!$(stepFigure2ID).find('img').hasClass('white-checker') && !$(attackFigure2ID).find('img').hasClass('cell-img')) {
+                            $(attackFigure2ID).addClass('step-white');
+                        }    
+                    }    
+                    // Attack implementation is here END
+                    
+                    // Back attack START                    
+                    var backAttackStepX = parseInt(x) + 1;
+                    var backAttackStepY1 = parseInt(y) - 1;
+                    var backAttackStepY2 = parseInt(y) + 1;
+
+                    var backAttackStepFigure1ID = '#white-cell-x-' + backAttackStepX + '-y-' + backAttackStepY1;
+                    var backAttackStepFigure2ID = '#white-cell-x-' + backAttackStepX + '-y-' + backAttackStepY2;
+                    
+                    var backAttackX = parseInt(x) + 2;
+                    var backAttackFigure1ID = '#white-cell-x-' + backAttackX + '-y-' + attackY1;
+                    var backAttackFigure2ID = '#white-cell-x-' + backAttackX + '-y-' + attackY2;                    
+                    
+                    if ($(backAttackStepFigure1ID).find('img').hasClass('black-checker')) {
+                        
+                        if (!$(backAttackStepFigure1ID).find('img').hasClass('white-checker') && !$(backAttackFigure1ID).find('img').hasClass('cell-img')) {
+                           
+                            $(backAttackFigure1ID).addClass('step-white');
+                        }                                               
+                    }   
+                    
+                    if ($(backAttackStepFigure2ID).find('img').hasClass('black-checker')) {
+                        
+                        if (!$(backAttackStepFigure2ID).find('img').hasClass('white-checker') && !$(backAttackFigure2ID).find('img').hasClass('cell-img')) {
+                           
+                            $(backAttackFigure2ID).addClass('step-white');
+                        }                                               
+                    }   
+                    // Back attack END                                                                                 
+                }                                
+                
+            }
+            
+            //Black checkers
+            if (hasFigure.hasClass('black-checker')) {                 
+                $(this).addClass('active-cell');
+                blackPrevious = $(this).attr('id');
+                
+                var id = $(this).attr('id');
+                var x = id.split('-')[3]; 
+                var y = id.split('-')[5];
+                
+                var stepX = parseInt(x) + 1;
+                var stepY1 = parseInt(y) - 1;
+                var stepY2 = parseInt(y) + 1;
+                
+                var stepFigure1ID = '#white-cell-x-' + stepX + '-y-' + stepY1;
+                var stepFigure2ID = '#white-cell-x-' + stepX + '-y-' + stepY2;
+                
+                if (whiteStep == true && blackStep == false) {
+                    $('.cell').removeClass('step-black');
+                    
+                    if (!$(stepFigure1ID).find('img').hasClass('cell-img')) {
+                        $(stepFigure1ID).addClass('step-black');
+                    }
+                    if (!$(stepFigure2ID).find('img').hasClass('cell-img')) {
+                        $(stepFigure2ID).addClass('step-black');
+                    }
+                    
+                    // Attack implementation is here START                    
+                    var attackX = parseInt(x) + 2;
+                    var attackY1 = parseInt(y) - 2;
+                    var attackY2 = parseInt(y) + 2;
+                    
+                    var attackFigure1ID = '#white-cell-x-' + attackX + '-y-' + attackY1;
+                    var attackFigure2ID = '#white-cell-x-' + attackX + '-y-' + attackY2;
+                
+                    if ($(stepFigure1ID).find('img').hasClass('white-checker')) {
+                        if (!$(stepFigure1ID).find('img').hasClass('black-checker') && !$(attackFigure1ID).find('img').hasClass('cell-img')) {                            
+                            $(attackFigure1ID).addClass('step-black');
+                        }    
+                    }                    
+                    
+                    if ($(stepFigure2ID).find('img').hasClass('white-checker')) {
+                        if (!$(stepFigure2ID).find('img').hasClass('black-checker') && !$(attackFigure2ID).find('img').hasClass('cell-img')) {
+                            $(attackFigure2ID).addClass('step-black');
+                        }    
+                    }                    
+                    // Attack implementation is here END
+                    
+                    
+                    // Back attack START                    
+                    var backAttackStepX = parseInt(x) - 1;
+                    var backAttackStepY1 = parseInt(y) - 1;
+                    var backAttackStepY2 = parseInt(y) + 1;
+
+                    var backAttackStepFigure1ID = '#white-cell-x-' + backAttackStepX + '-y-' + backAttackStepY1;
+                    var backAttackStepFigure2ID = '#white-cell-x-' + backAttackStepX + '-y-' + backAttackStepY2;
+                    
+                    var backAttackX = parseInt(x) - 2;
+                    var backAttackFigure1ID = '#white-cell-x-' + backAttackX + '-y-' + attackY1;
+                    var backAttackFigure2ID = '#white-cell-x-' + backAttackX + '-y-' + attackY2;                    
+                    
+                    if ($(backAttackStepFigure1ID).find('img').hasClass('white-checker')) {
+                        
+                        if (!$(backAttackStepFigure1ID).find('img').hasClass('black-checker') && !$(backAttackFigure1ID).find('img').hasClass('cell-img')) {
+                           
+                            $(backAttackFigure1ID).addClass('step-black');
+                        }                                               
+                    }   
+                    
+                    if ($(backAttackStepFigure2ID).find('img').hasClass('white-checker')) {
+                        
+                        if (!$(backAttackStepFigure2ID).find('img').hasClass('black-checker') && !$(backAttackFigure2ID).find('img').hasClass('cell-img')) {
+                           
+                            $(backAttackFigure2ID).addClass('step-black');
+                        }                                               
+                    }   
+                    // Back attack END   
+                    
+                }                                
+                
+            }
+                      
+        });
+        
+        $('.step-white').live('click', function () {   
+                if (whiteStep == false && blackStep == true) {                                                                                           
+                    
+                    // Check an Attack. Remove killed checker if necessary START
+                    var x = activeWhiteCellID.split('-')[3]; 
+                    var y = activeWhiteCellID.split('-')[5];                    
+                    
+                    var currentCellID = $(this).attr('id');                                        
+                    
+                    var currentX = currentCellID.split('-')[3]; 
+                    var currentY = currentCellID.split('-')[5];                    
+                    
+                    // if currentX == 0 - the checker is a king
+                    if (parseInt(currentX) > 0) {
+                        
+                        var diffY = Math.abs(parseInt(currentY) - parseInt(y));                                                                                
+
+                        var stepX = parseInt(x) - 1;
+                        var stepY1 = parseInt(y) - 1;
+                        var stepY2 = parseInt(y) + 1;
+
+                        var stepFigure1ID = '#white-cell-x-' + stepX + '-y-' + stepY1;
+                        var stepFigure2ID = '#white-cell-x-' + stepX + '-y-' + stepY2;
+
+                        if (!$(currentCellID).find('img').hasClass('cell-img')) {                        
+                            if ($(stepFigure1ID).hasClass('black-cell') && $(stepFigure1ID).find('img').hasClass('cell-img')) {                                                    
+                                if (diffY == 2 && parseInt(currentY) < parseInt(y) && parseInt(currentX) < parseInt(x)) {
+                                    $(stepFigure1ID).find('img').remove();
+                                    blackCheckersCount --;
+                                    console.log("\ndiffY: " + diffY + " REMOVED LEFT");
+                                }                                                   
+                            }
+
+                            if ($(stepFigure2ID).hasClass('black-cell') && $(stepFigure2ID).find('img').hasClass('cell-img')) {                                                                           
+                                if (diffY == 2 && parseInt(currentY) > parseInt(y) && parseInt(currentX) < parseInt(x)) {                            
+                                    $(stepFigure2ID).find('img').remove();
+                                    blackCheckersCount --;
+                                    console.log("\ndiffY: " + diffY + " REMOVED RIGHT");
+                                }    
+                            }
+                        }   
+
+
+                        var backStepX = parseInt(x) + 1;
+                        var backStepFigure1ID = '#white-cell-x-' + backStepX + '-y-' + stepY1;
+                        var backStepFigure2ID = '#white-cell-x-' + backStepX + '-y-' + stepY2;
+
+
+                        if (!$(currentCellID).find('img').hasClass('cell-img')) {
+                            if ($(backStepFigure1ID).hasClass('black-cell') && $(backStepFigure1ID).find('img').hasClass('cell-img')) {                                                    
+                                if (diffY == 2 && parseInt(currentY) < parseInt(y) && parseInt(currentX) > parseInt(x)) {
+                                    $(backStepFigure1ID).find('img').remove();
+                                    blackCheckersCount --;
+                                    console.log("\ndiffY: " + diffY + " REMOVED BACK LEFT");
+                                }                                                   
+                            }
+
+                            if ($(backStepFigure2ID).hasClass('black-cell') && $(backStepFigure2ID).find('img').hasClass('cell-img')) {                                                    
+                                if (diffY == 2 && parseInt(currentY) > parseInt(y) && parseInt(currentX) > parseInt(x)) {                                                            
+                                    $(backStepFigure2ID).find('img').remove();
+                                    blackCheckersCount --;
+                                    console.log("\ndiffY: " + diffY + " REMOVED BACK RIGHT");
+                                }    
+                            }
+                        }       
+                    }
+                    else if (parseInt(currentX) == 0) {
+                        console.log("\nKING: " + currentCellID);
+                        $('#' + currentCellID).addClass('king').find('img').remove();
+                        $('#' + currentCellID).append('<img src="images/white_king.gif" class="white-checker cell-img" />');
+                    }
+                    // Check an Attack. Remove killed checker if necessary END
+                    
+                    $('.cell').removeClass('step-white');
+                    $('.cell').removeClass('step-black');
+                    
+                    $('.cell').removeClass('active-cell');                     
+                    $('#' + whitePrevious).find('img').remove();
+                                         
+                    $(this).removeClass('step-white');                      
+                    
+                    
+                    if (!$(this).hasClass('king')) {
+                        $(this).append('<img src="images/' + checkerWhite + '" class="white-checker cell-img" />');
+                    }    
+                    
+                    
+                    if (blackCheckersCount < 1) {
+                        alert('Белые победили!');
+                    }
+                    
+                    activeWhiteCellID = null;
+                    whiteStep = true;               
+                    blackStep = false;
+                 }    
+            });
+            
+            $('.step-black').live('click', function () {                                
+                if (whiteStep == true && blackStep == false) {
+                    
+                    // Check an Attack. Remove killed checker if necessary START
+                    var x = activeBlackCellID.split('-')[3]; 
+                    var y = activeBlackCellID.split('-')[5];                    
+                    
+                    var currentCellID = $(this).attr('id');                                        
+                    
+                    var currentX = currentCellID.split('-')[3]; 
+                    var currentY = currentCellID.split('-')[5];                    
+                    
+                    // if currentX == 0 - the checker is a king
+                    if (parseInt(currentX) > 0) {
+                        
+                        var diffY = Math.abs(parseInt(currentY) - parseInt(y));                                                                                
+
+                        var stepX = parseInt(x) + 1;
+                        var stepY1 = parseInt(y) - 1;
+                        var stepY2 = parseInt(y) + 1;
+
+                        var stepFigure1ID = '#white-cell-x-' + stepX + '-y-' + stepY1;
+                        var stepFigure2ID = '#white-cell-x-' + stepX + '-y-' + stepY2;
+
+                        if (!$(currentCellID).find('img').hasClass('cell-img')) {                        
+                            if ($(stepFigure1ID).hasClass('black-cell') && $(stepFigure1ID).find('img').hasClass('cell-img')) {                                                    
+                                if (diffY == 2 && parseInt(currentY) < parseInt(y) && parseInt(currentX) > parseInt(x)) {
+                                    $(stepFigure1ID).find('img').remove();
+                                    whiteCheckersCount --;
+                                    console.log("\ndiffY: " + diffY + " REMOVED LEFT BLACK");
+                                }                                                   
+                            }
+
+                            if ($(stepFigure2ID).hasClass('black-cell') && $(stepFigure2ID).find('img').hasClass('cell-img')) {                                                                           
+                                if (diffY == 2 && parseInt(currentY) > parseInt(y) && parseInt(currentX) > parseInt(x)) {                            
+                                    $(stepFigure2ID).find('img').remove();
+                                    whiteCheckersCount --;
+                                    console.log("\ndiffY: " + diffY + " REMOVED RIGHT BLACK");
+                                }    
+                            }
+                        }   
+
+
+                        var backStepX = parseInt(x) - 1;
+                        var backStepFigure1ID = '#white-cell-x-' + backStepX + '-y-' + stepY1;
+                        var backStepFigure2ID = '#white-cell-x-' + backStepX + '-y-' + stepY2;
+
+
+                        if (!$(currentCellID).find('img').hasClass('cell-img')) {
+                            if ($(backStepFigure1ID).hasClass('black-cell') && $(backStepFigure1ID).find('img').hasClass('cell-img')) {                                                    
+                                if (diffY == 2 && parseInt(currentY) < parseInt(y) && parseInt(currentX) < parseInt(x)) {
+                                    $(backStepFigure1ID).find('img').remove();
+                                    whiteCheckersCount --;
+                                    console.log("\ndiffY: " + diffY + " REMOVED BACK LEFT");
+                                }                                                   
+                            }
+
+                            if ($(backStepFigure2ID).hasClass('black-cell') && $(backStepFigure2ID).find('img').hasClass('cell-img')) {                                                    
+                                if (diffY == 2 && parseInt(currentY) > parseInt(y) && parseInt(currentX) < parseInt(x)) {                                                            
+                                    $(backStepFigure2ID).find('img').remove();
+                                    whiteCheckersCount --;
+                                    console.log("\ndiffY: " + diffY + " REMOVED BACK RIGHT");
+                                }    
+                            }
+                        }       
+                    }
+                    else if (parseInt(currentX) == 0) {
+                        console.log("\nKING: " + currentCellID);
+                        //$('#' + currentCellID).addClass('king').find('img').remove();
+                        //$('#' + currentCellID).append('<img src="images/white_king.gif" class="white-checker cell-img" />');
+                    }
+                    // Check an Attack. Remove killed checker if necessary END                                                                                
+                    
+                    
+                    $('.cell').removeClass('step-black');
+                    $('.cell').removeClass('step-white');
+                                                            
+                    
+                    $('.cell').removeClass('active-cell'); 
+                    
+                    $('#' + blackPrevious).find('img').remove();
+                     
+                    
+                    $(this).removeClass('step-black');  
+                                        
+                    
+                    $(this).append('<img src="images/' + checkerBlack + '" class="black-checker cell-img" />');
+
+                    activeBlackCellID = null; 
+                    whiteStep = false;               
+                    blackStep = true;
+                }     
+            });
+                           
+     });
+     
+ </script>
+
+</head>
+<body>    
+    
+ <div id="board"></div>
+ 
+</body>
+</html>
